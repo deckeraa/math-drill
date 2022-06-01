@@ -1,13 +1,14 @@
 (ns math-drill.core
   (:require
    [math-drill.gen :as gen]
-   [reagent.core :as reagent :refer [atom]]
+   [reagent.core :as r]
+   [reagent.dom :as rdom]
    ["math-renderer" :as math-renderer]))
 
 ;; import 'katex/dist/katex.min.css'
 
 ;; define your app data so that it doesn't get over-written on reload
-(defonce app-state (atom {:text "Hello world!"}))
+(defonce app-state (r/atom {:text "Hello world!"}))
 
 (defn math [s]
   [:> math-renderer {:value s}])
@@ -18,8 +19,8 @@
    [math (gen/simple-linear-equation)]])
 
 (defn start []
-  (reagent/render-component [hello-world]
-                            (. js/document (getElementById "app"))))
+  (rdom/render [hello-world]
+               (. js/document (getElementById "app"))))
 
 (defn ^:export init []
   ;; init is called ONCE when the page loads
