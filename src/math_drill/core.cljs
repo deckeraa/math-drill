@@ -5,18 +5,26 @@
    [reagent.dom :as rdom]
    ["math-renderer" :as math-renderer]))
 
-;; import 'katex/dist/katex.min.css'
-
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (r/atom {:text "Hello world!"}))
 
-(defn math [s]
-  [:> math-renderer {:value s}])
+(defn math
+  "Reagent component that renders the string of math.
+   If a number is passed in, it will be change to an in-line expression string."
+  [s]
+  (let [s (if (string? s)
+            s
+            (str "$" s "$"))]
+    [:> math-renderer {:value (str s)}]))
 
 (defn hello-world []
-  [:div
-   [:h1 (:text @app-state)]
-   [math (gen/simple-linear-equation)]])
+  (r/with-let [exercise-atom (r/atom (gen/simple-linear-equation))]
+    (let [{:keys [question answer]} @exercise-atom]
+      [:div
+       [:h1 (:text @app-state)]
+       [:span "Q: " [math question]]
+       [:br]
+       [:span "A: " [math answer]]])))
 
 (defn start []
   (rdom/render [hello-world]
