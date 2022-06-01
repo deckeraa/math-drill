@@ -1,20 +1,21 @@
 (ns math-drill.core
-  (:require [reagent.core :as reagent :refer [atom]]
-            ["math-renderer" :as math-renderer]))
+  (:require
+   [math-drill.gen :as gen]
+   [reagent.core :as reagent :refer [atom]]
+   ["math-renderer" :as math-renderer]))
 
 ;; import 'katex/dist/katex.min.css'
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (atom {:text "Hello world!"}))
 
+(defn math [s]
+  [:> math-renderer {:value s}])
+
 (defn hello-world []
   [:div
    [:h1 (:text @app-state)]
-   [:div
-    [:> math-renderer {:value "Inline expression $\\int_0^\\infty x^2 dx$"}]]
-   [:div
-    [:> math-renderer {:value "Block expression $$\\int_0^\\infty x^2 dx$$"}]]
-   [:h3 "Edit this and watch it change."]])
+   [math (gen/simple-linear-equation)]])
 
 (defn start []
   (reagent/render-component [hello-world]
