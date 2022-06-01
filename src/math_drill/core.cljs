@@ -10,7 +10,7 @@
 
 (defn math
   "Reagent component that renders the string of math.
-   If a number is passed in, it will be change to an in-line expression string."
+   If a number is passed in, it will be changed to an in-line expression string."
   [s]
   (let [s (if (string? s)
             s
@@ -24,7 +24,9 @@
        [:h1 (:text @app-state)]
        [:span "Q: " [math question]]
        [:br]
-       [:span "A: " [math answer]]])))
+       [:span "A: " [math answer]]
+       [:button {:on-click #(reset! exercise-atom (gen/simple-linear-equation))}
+        "New problem"]])))
 
 (defn start []
   (rdom/render [hello-world]

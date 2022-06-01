@@ -1,13 +1,11 @@
 ;; shadow-cljs configuration
-{:source-paths
- ["src"]
-
+{:source-paths ["src" "test"]
  :dependencies [[binaryage/devtools "0.9.7"]
                 [reagent "1.1.1"]]
 
  ;; set an nrepl port for connection to a REPL.
  :nrepl        {:port 8777}
-
+ :dev-http {8021 "resources/public/js/test"}
  :builds
  {:app {:target :browser
         :output-dir "public/js/compiled"
@@ -25,5 +23,6 @@
          ;; serve the public directory over http at port 8700
          :http-root    "public"
          :http-port    8700
-         :preloads     [devtools.preload]}
-        }}}
+         :preloads     [devtools.preload]}}
+  :test {:target :browser-test
+         :test-dir "resources/public/js/test"}}}
