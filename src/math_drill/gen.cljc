@@ -11,6 +11,15 @@
     0 ""
     (str coeff var-name)))
 
+(defn render-simple-linear-equation [a b c]
+  (str "$"
+       (coeff-var a "x")
+       (when (and (not (zero? a))
+                (not (zero? b)))
+         " + ")
+       (when-not (zero? b) b)
+       " = " c "$"))
+
 (defn simple-linear-equation
   "Creates equations of the type ax + b = c"
   []
@@ -18,5 +27,5 @@
         b (rand-int-with-negs 20)
         x (rand-int-with-negs 20)
         c (+ (* a x) b)]
-    {:question (str "$" (coeff-var a "x + ") b " = " c "$")
+    {:question (render-simple-linear-equation a b c)
      :answer x}))
