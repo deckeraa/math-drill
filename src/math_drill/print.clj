@@ -2,11 +2,18 @@
   (:require [math-drill.gen :as gen]
             [clojure.java.shell :as shell]))
 
+(defn exercise->vspace [exercise]
+  (case (:type exercise)
+    :simple-linear-equation 0.75
+    1))
+
 (defn preamble []
   (str
    "\\documentclass[11pt]{article}
+\\usepackage[letterpaper]{geometry}
 \\usepackage{multicol}
 \\usepackage{fancyhdr}
+\\usepackage{layout}
 \\author{aaron}
 \\date{\\today}
 \\title{}
@@ -26,7 +33,7 @@
   \\begin{enumerate}
 "
    (apply str (map (fn [{:keys [question] :as exercise}]
-                     (str "    \\item{" question "}\n"))
+                     (str "    \\item{" question "}\n\\vspace{" (exercise->vspace exercise) "in}\n"))
                    exercises))
    "  \\end{enumerate}
 \\end{multicols}
@@ -37,7 +44,7 @@
 
 (defn write-page! []
   (let [filename "data/sample.tex"
-        num-exercises 30
+        num-exercises 20
         exercises (take num-exercises (repeatedly gen/simple-linear-equation))]
     (spit filename
           (str

@@ -27,5 +27,6 @@
         b (rand-int-with-negs 20)
         x (rand-int-with-negs 20)
         c (+ (* a x) b)]
-    {:question (render-simple-linear-equation a b c)
+    {:type :simple-linear-equation
+     :question (render-simple-linear-equation a b c)
      :answer x}))
