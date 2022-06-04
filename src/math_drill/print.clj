@@ -1,5 +1,6 @@
 (ns math-drill.print
-  (:require [math-drill.gen :as gen]))
+  (:require [math-drill.gen :as gen]
+            [clojure.java.shell :as shell]))
 
 (defn preamble []
   (str
@@ -42,4 +43,5 @@
           (str
            (preamble)
            (exercises-section exercises)
-           (postamble)))))
+           (postamble)))
+    (shell/sh "pdflatex" "sample.tex" :dir "data")))
