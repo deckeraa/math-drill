@@ -34,9 +34,11 @@
 (defn render-quadratic-equation-in-standard-form [a b c]
   (str "$"
        (coeff-var a "x^2")
-       (if-not (neg? b) " + " " - ")
+       (when-not (zero? a)
+         (if-not (neg? b) " + " " - "))
        (coeff-var (abs b) "x")
-       (if-not (neg? c) " + " " - ")
+       (when-not (zero? b)
+         (if-not (neg? c) " + " " - "))
        (abs c)
        " = 0$"))
 
