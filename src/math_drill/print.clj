@@ -11,7 +11,7 @@
 (defn exercise->num-on-page [exercise]
   (let [t (if (map? exercise) (:type exercise) exercise)]
     (case t
-      :simple-linear-equation 20
+      :simple-linear-equation 18
       :quadratic-equation 12)))
 
 (defn preamble []
@@ -48,25 +48,28 @@
 (defn postamble []
   "\\end{document}")
 
-(defn write-page! []
-  (let [filename "data/sample.tex"
-        half-page? true
-        exercise-type :quadratic-equation
-        exercise-fn (gen/type->fn exercise-type)
-        num-exercises (exercise->num-on-page exercise-type)
-        num-exercises (if half-page?
-                        (quot num-exercises 2)
-                        num-exercises)
-        exercises (take num-exercises (repeatedly exercise-fn))]
-    (spit filename
-          (str
-           (preamble)
-           (custom-header)
-           (exercises-section exercises)
-           (when half-page?
-             (str
-              "\\vspace{0.5in}"
-              (custom-header)
-              (exercises-section exercises)))
-           (postamble)))
-    (shell/sh "pdflatex" "sample.tex" :dir "data")))
+(defn write-page!
+  "You can run this like (write-page!) to get defaults or do something like:
+  (write-page! {:half-page? true :exercise-type :quadratic-equation}) to customize."
+  ([]
+   (write-page! {}))
+  ([{:keys [half-page? filename exercise-type] :as opts}]
+   (let [filename (or filename "sample.tex")
+         exercise-type (or exercise-type :simple-linear-equation)
+         exercise-fn (gen/type->fn exercise-type)
+         num-exercises (exercise->num-on-page exercise-type)
+         num-exercises (if half-page?
+                         (quot num-exercises 2)
+                         num-exercises)
+         exercises (take num-exercises (repeatedly exercise-fn))]
+     (spit (str "data/" filename)
+           (str
+            (preamble)
+            (custom-header)
+            (exercises-section exercises)
+            (when half-page?
+              (str
+               (custom-header)
+               (exercises-section exercises)))
+            (postamble)))
+     (shell/sh "pdflatex" filename :dir "data"))))
