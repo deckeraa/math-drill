@@ -5,7 +5,14 @@
 (defn exercise->vspace [exercise]
   (case (:type exercise)
     :simple-linear-equation 0.75
+    :quadratic-equation 1.50
     1))
+
+(defn exercise->num-on-page [exercise]
+  (let [t (if (map? exercise) (:type exercise) exercise)]
+    (case t
+      :simple-linear-equation 20
+      :quadratic-equation 12)))
 
 (defn preamble []
   (str
@@ -32,7 +39,7 @@
   \\begin{enumerate}
 "
    (apply str (map (fn [{:keys [question] :as exercise}]
-                     (str "    \\item{" question "}\n\\vspace{" (exercise->vspace exercise) "in}\n"))
+                     (str "    \\item{" question "}\n\\vspace*{" (exercise->vspace exercise) "in}\n"))
                    exercises))
    "  \\end{enumerate}
 \\end{multicols}
@@ -43,15 +50,23 @@
 
 (defn write-page! []
   (let [filename "data/sample.tex"
-        num-exercises 10
-        exercises (take num-exercises (repeatedly gen/simple-linear-equation))]
+        half-page? true
+        exercise-type :quadratic-equation
+        exercise-fn (gen/type->fn exercise-type)
+        num-exercises (exercise->num-on-page exercise-type)
+        num-exercises (if half-page?
+                        (quot num-exercises 2)
+                        num-exercises)
+        exercises (take num-exercises (repeatedly exercise-fn))]
     (spit filename
           (str
            (preamble)
            (custom-header)
            (exercises-section exercises)
-           "\\vspace{0.5in}"
-           (custom-header)
-           (exercises-section exercises)
+           (when half-page?
+             (str
+              "\\vspace{0.5in}"
+              (custom-header)
+              (exercises-section exercises)))
            (postamble)))
     (shell/sh "pdflatex" "sample.tex" :dir "data")))

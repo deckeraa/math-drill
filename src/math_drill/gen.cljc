@@ -51,6 +51,12 @@
          a scale-factor
          b (* scale-factor -1 (+ sol1 sol2))
          c (* scale-factor sol1 sol2)]
+     ;; TODO: there's a bug where sometimes this renders as + + 0 = 0. Probably 0 is getting chosen as scale-factor.
      {:type :quadratic-equation
       :question (render-quadratic-equation-in-standard-form a b c)
       :answer [sol1, sol2]})))
+
+(defn type->fn [t]
+  (case t
+    :simple-linear-equation simple-linear-equation
+    :quadratic-equation quadratic-equation))
