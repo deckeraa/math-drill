@@ -30,3 +30,27 @@
     {:type :simple-linear-equation
      :question (render-simple-linear-equation a b c)
      :answer x}))
+
+(defn render-quadratic-equation-in-standard-form [a b c]
+  (str "$"
+       (coeff-var a "x^2")
+       (if-not (neg? b) " + " " - ")
+       (coeff-var (abs b) "x")
+       (if-not (neg? c) " + " " - ")
+       (abs c)
+       " = 0$"))
+
+(defn quadratic-equation
+  "Creates quadratic equations."
+  ([] (quadratic-equation {}))
+  ([{:keys [isolate-x?]}]
+   (let [sol1 (rand-int-with-negs 20)
+         sol2 (rand-int-with-negs 20)
+         scale-factor (if isolate-x? 1 (rand-int-with-negs 9))
+         ;; (x - sol1)(x - sol2) = x^2 - sol1*x - sol2*x + sol1*sol2 = x^2 - (sol1 + sol2)x + sol1*sol2
+         a scale-factor
+         b (* scale-factor -1 (+ sol1 sol2))
+         c (* scale-factor sol1 sol2)]
+     {:type :quadratic-equation
+      :question (render-quadratic-equation-in-standard-form a b c)
+      :answer [sol1, sol2]})))

@@ -19,3 +19,9 @@
          "$4x = 4$"))
   (is (= (g/render-simple-linear-equation 1 1 4)
          "$x + 1 = 4$")))
+
+(deftest render-quadratic-equation-in-standard-form-test
+  (is (= (g/render-quadratic-equation-in-standard-form 1 2 3)
+         "$x^2 + 2x + 3 = 0$"))
+  (is (= (g/render-quadratic-equation-in-standard-form 2 -1 -2)
+         "$2x^2 - x - 2 = 0$")))

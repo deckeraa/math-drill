@@ -8,6 +8,14 @@
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (r/atom {:text "Hello world!"}))
 
+(defn mathify-value [v]
+  (if (string? v)
+    v
+    (str "$" v "$")))
+
+(defn mathify-values [vs]
+  (apply str (interpose "," (map mathify-value vs))))
+
 (defn math
   "Reagent component that renders the string of math.
    If a number is passed in, it will be changed to an in-line expression string."
@@ -18,14 +26,16 @@
     [:> math-renderer {:value (str s)}]))
 
 (defn hello-world []
-  (r/with-let [exercise-atom (r/atom (gen/simple-linear-equation))]
+  (r/with-let [exercise-fn gen/quadratic-equation
+               exercise-opts {:isolate-x? true}
+               exercise-atom (r/atom (exercise-fn exercise-opts))]
     (let [{:keys [question answer]} @exercise-atom]
       [:div
        [:h1 (:text @app-state)]
        [:span "Q: " [math question]]
        [:br]
-       [:span "A: " [math answer]]
-       [:button {:on-click #(reset! exercise-atom (gen/simple-linear-equation))}
+       [:span "A: " [math (mathify-values answer)]]
+       [:button {:on-click #(reset! exercise-atom (exercise-fn exercise-opts))}
         "New problem"]])))
 
 (defn start []
