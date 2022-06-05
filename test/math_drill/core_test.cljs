@@ -5,8 +5,12 @@
 
 (deftest mathify-value-test
   (is (= (c/mathify-value 5) "$5$"))
-  (testing "We assume, rightly or wrongly, that passed string values shouldn't be converted. Maybe change this behavior in the future to always convert while still retaining idempotency?"
-    (is (= (c/mathify-value "$5$") "$5$")))
+  (testing "string handling"
+    (is (= (c/mathify-value "5") "$5$"))
+    (is (= (c/mathify-value "$5") "$$5$"))) 
+  (testing "Idempotency"
+    (is (= (c/mathify-value "$5$") "$5$"))
+    (is (= (c/mathify-value (c/mathify-value (c/mathify-value 5))) "$5$")))
   (testing "I guess this is acceptable nil behavior?"
     (is (= (c/mathify-value nil) "$$"))))
 

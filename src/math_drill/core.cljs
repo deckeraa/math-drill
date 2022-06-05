@@ -9,21 +9,23 @@
 (defonce app-state (r/atom {:text "Hello world!"}))
 
 (defn mathify-value [v]
-  (if (string? v)
+  (if (and (string? v) (= "$" (first v)) (= "$" (last v)))
     v
     (str "$" v "$")))
 
 (defn mathify-values [vs]
   (apply str (interpose "," (map mathify-value vs))))
 
+(defn mathify [v]
+  (if (seq? v)
+    (mathify-values v)
+    (mathify-value v)))
+
 (defn math
   "Reagent component that renders the string of math.
    If a number is passed in, it will be changed to an in-line expression string."
-  [s]
-  (let [s (if (string? s)
-            s
-            (str "$" s "$"))]
-    [:> math-renderer {:value (str s)}]))
+  [v]
+  [:> math-renderer {:value (mathify v)}])
 
 (defn hello-world []
   (r/with-let [exercise-fn gen/quadratic-equation
