@@ -33,13 +33,17 @@
 \\vspace{0.1in}
 \\hrule")
 
-(defn exercises-section [exercises]
+(defn exercises-section [exercises {:keys [show-answers?]}]
   (str
    "\\begin{multicols}{3}
   \\begin{enumerate}
 "
-   (apply str (map (fn [{:keys [question] :as exercise}]
-                     (str "    \\item{" question "}\n\\vspace*{" (exercise->vspace exercise) "in}\n"))
+   (apply str (map (fn [{:keys [question answer] :as exercise}]
+                     (str "    \\item{"
+                          question
+                          (when show-answers? (str "\\newline " answer))
+                          "}\n"
+                          "\\vspace*{" (exercise->vspace exercise) "in}\n"))
                    exercises))
    "  \\end{enumerate}
 \\end{multicols}
@@ -53,7 +57,7 @@
   (write-page! {:half-page? true :exercise-type :quadratic-equation}) to customize."
   ([]
    (write-page! {}))
-  ([{:keys [half-page? filename exercise-type] :as opts}]
+  ([{:keys [half-page? filename exercise-type show-answers?] :as opts}]
    (let [filename (or filename "sample.tex")
          exercise-type (or exercise-type :simple-linear-equation)
          exercise-fn (gen/type->fn exercise-type)
@@ -66,10 +70,10 @@
            (str
             (preamble)
             (custom-header)
-            (exercises-section exercises)
+            (exercises-section exercises (select-keys opts [:show-answers?]))
             (when half-page?
               (str
                (custom-header)
-               (exercises-section exercises)))
+               (exercises-section exercises (select-keys opts [:show-answers?]))))
             (postamble)))
      (shell/sh "pdflatex" filename :dir "data"))))
