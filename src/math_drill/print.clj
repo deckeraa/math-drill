@@ -12,20 +12,19 @@
    "\\documentclass[11pt]{article}
 \\usepackage[letterpaper]{geometry}
 \\usepackage{multicol}
-\\usepackage{fancyhdr}
 \\usepackage{layout}
-\\author{aaron}
-\\date{\\today}
-\\title{}
+
+\\voffset=-0.5in
+\\addtolength{\\textheight}{-2\\voffset}
 
 \\begin{document}
-
-\\pagestyle{fancy}
-\\fancyhead{}
-\\lhead{\\textit{Math Drill}}
-\\rhead{\\textit{Simple Linear Equations}}
-
+\\pagestyle{empty}
 "))
+
+(defn custom-header []
+  "Math Drill \\hspace{3in} Name: 
+\\vspace{0.1in}
+\\hrule")
 
 (defn exercises-section [exercises]
   (str
@@ -44,11 +43,15 @@
 
 (defn write-page! []
   (let [filename "data/sample.tex"
-        num-exercises 20
+        num-exercises 10
         exercises (take num-exercises (repeatedly gen/simple-linear-equation))]
     (spit filename
           (str
            (preamble)
+           (custom-header)
+           (exercises-section exercises)
+           "\\vspace{0.5in}"
+           (custom-header)
            (exercises-section exercises)
            (postamble)))
     (shell/sh "pdflatex" "sample.tex" :dir "data")))
