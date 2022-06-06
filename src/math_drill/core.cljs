@@ -2,6 +2,7 @@
   (:require
    [math-drill.gen :as gen]
    [math-drill.util :refer [mathify mathify-values]]
+   [math-drill.print-ui :as print-ui]
    [reagent.core :as r]
    [reagent.dom :as rdom]
    ["math-renderer" :as math-renderer]))
@@ -26,7 +27,8 @@
        [:br]
        [:span "A: " [math (mathify-values answer)]]
        [:button {:on-click #(reset! exercise-atom (exercise-fn exercise-opts))}
-        "New problem"]])))
+        "New problem"]
+       [print-ui/print-ui-core]])))
 
 (defn start []
   (rdom/render [hello-world]

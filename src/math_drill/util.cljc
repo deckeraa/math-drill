@@ -1,5 +1,7 @@
 (ns math-drill.util)
 
+(def data-url "http://localhost:3000")
+
 (defn mathify-value
   "Takes a single value and turns it into a LaTeX math string."
   [v]

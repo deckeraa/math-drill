@@ -1,7 +1,8 @@
 (ns math-drill.print
   (:require [math-drill.gen :as gen]
             [math-drill.util :refer [mathify]]
-            [clojure.java.shell :as shell]))
+            [clojure.java.shell :as shell]
+            [ring.util.response :refer [file-response]]))
 
 (defn exercise->vspace [exercise]
   (case (:type exercise)
@@ -78,3 +79,8 @@
                (exercises-section exercises (select-keys opts [:show-answers?]))))
             (postamble)))
      (shell/sh "pdflatex" filename :dir "data"))))
+
+(defn download-exercise-sheet-handler
+  [req]
+  (println "download-exercise-sheet-handler: " req)
+  (file-response (str "data/" "sample.pdf")))
