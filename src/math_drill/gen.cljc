@@ -61,7 +61,6 @@
       :question (render-quadratic-equation-in-standard-form a b c)
       :answer [sol1, sol2]})))
 
-(defn type->fn [t]
-  (case t
-    :simple-linear-equation simple-linear-equation
-    :quadratic-equation quadratic-equation))
+(def type->fn
+  {:simple-linear-equation simple-linear-equation
+   :quadratic-equation quadratic-equation})
