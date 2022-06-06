@@ -2,7 +2,9 @@
   (:require [math-drill.gen :as gen]
             [math-drill.util :refer [mathify]]
             [clojure.java.shell :as shell]
-            [ring.util.response :refer [file-response]]))
+            [clojure.walk :refer [keywordize-keys]]
+            [ring.util.response :refer [file-response]]
+            [ring.util.codec :as codec]))
 
 (defn exercise->vspace [exercise]
   (case (:type exercise)
@@ -82,5 +84,13 @@
 
 (defn download-exercise-sheet-handler
   [req]
-  (println "download-exercise-sheet-handler: " req)
-  (file-response (str "data/" "sample.pdf")))
+  (let [query-map (as-> (:query-string req) $
+                    (if $
+                      (keywordize-keys (codec/form-decode $))))
+        opts (clojure.edn/read-string (:opts query-map))
+        uuid (.toString (java.util.UUID/randomUUID))
+        filename (str uuid ".pdf")]
+    (println "download-exercise-sheet-handler: " opts)
+    (write-page! (merge opts {:filename filename}))
+    (println "Just wrote: " filename)
+    (file-response (str "data/" filename))))
