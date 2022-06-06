@@ -29,3 +29,13 @@
          "$0 = 0$"))
   (is (= (g/render-quadratic-equation-in-standard-form 0 0 1)
          "$1 = 0$")))
+
+(deftest approx-page-length-test
+  (is (< (abs (- (g/approx-page-length [{:type :simple-linear-equation :foo :bar}
+                                        {:type :simple-linear-equation :foo :bar}
+                                        {:type :quadratic-equation :foo :bar}])
+                 0.1944))
+         0.01))
+  (is (< (abs (- (g/approx-page-length (take 18 (repeat {:type :simple-linear-equation :foo :bar})))
+                 1))
+         0.01)))

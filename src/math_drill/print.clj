@@ -6,18 +6,6 @@
             [ring.util.response :refer [file-response]]
             [ring.util.codec :as codec]))
 
-(defn exercise->vspace [exercise]
-  (case (:type exercise)
-    :simple-linear-equation 0.75
-    :quadratic-equation 1.50
-    1))
-
-(defn exercise->num-on-page [exercise]
-  (let [t (if (map? exercise) (:type exercise) exercise)]
-    (case t
-      :simple-linear-equation 18
-      :quadratic-equation 12)))
-
 (defn preamble []
   (str
    "\\documentclass[11pt]{article}
@@ -47,7 +35,7 @@
                           question
                           (when show-answers? (str "\\newline " (mathify answer)))
                           "}\n"
-                          "\\vspace*{" (exercise->vspace exercise) "in}\n"))
+                          "\\vspace*{" (gen/exercise->vspace exercise) "in}\n"))
                    exercises))
    "  \\end{enumerate}
 \\end{multicols}
@@ -58,18 +46,13 @@
 
 (defn write-page!
   "You can run this like (write-page!) to get defaults or do something like:
-  (write-page! {:half-page? true :exercise-type :quadratic-equation}) to customize."
+  (write-page! {:half-page? true :exr-types {:quadratic-equation true}}) to customize."
   ([]
    (write-page! {}))
-  ([{:keys [half-page? filename exercise-type show-answers?] :as opts}]
+  ([{:keys [half-page? filename exercise-type exr-types show-answers?] :as opts}]
    (let [filename (or filename "sample.tex")
-         exercise-type (or exercise-type :simple-linear-equation)
-         exercise-fn (gen/type->fn exercise-type)
-         num-exercises (exercise->num-on-page exercise-type)
-         num-exercises (if half-page?
-                         (quot num-exercises 2)
-                         num-exercises)
-         exercises (take num-exercises (repeatedly exercise-fn))]
+         exr-types (or exr-types {:simple-linear-equation true})
+         exercises (gen/exercises-for-page exr-types (if half-page? 0.5 1))]
      (spit (str "data/" filename)
            (str
             (preamble)
