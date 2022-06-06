@@ -1,25 +1,13 @@
 (ns math-drill.core
   (:require
    [math-drill.gen :as gen]
+   [math-drill.util :refer [mathify mathify-values]]
    [reagent.core :as r]
    [reagent.dom :as rdom]
    ["math-renderer" :as math-renderer]))
 
 ;; define your app data so that it doesn't get over-written on reload
 (defonce app-state (r/atom {:text "Hello world!"}))
-
-(defn mathify-value [v]
-  (if (and (string? v) (= "$" (first v)) (= "$" (last v)))
-    v
-    (str "$" v "$")))
-
-(defn mathify-values [vs]
-  (apply str (interpose "," (map mathify-value vs))))
-
-(defn mathify [v]
-  (if (seq? v)
-    (mathify-values v)
-    (mathify-value v)))
 
 (defn math
   "Reagent component that renders the string of math.

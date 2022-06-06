@@ -1,5 +1,6 @@
 (ns math-drill.print
   (:require [math-drill.gen :as gen]
+            [math-drill.util :refer [mathify]]
             [clojure.java.shell :as shell]))
 
 (defn exercise->vspace [exercise]
@@ -41,7 +42,7 @@
    (apply str (map (fn [{:keys [question answer] :as exercise}]
                      (str "    \\item{"
                           question
-                          (when show-answers? (str "\\newline " answer))
+                          (when show-answers? (str "\\newline " (mathify answer)))
                           "}\n"
                           "\\vspace*{" (exercise->vspace exercise) "in}\n"))
                    exercises))
