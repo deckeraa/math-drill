@@ -51,8 +51,8 @@
   "Creates quadratic equations."
   ([] (quadratic-equation {}))
   ([{:keys [isolate-x?]}]
-   (let [sol1 (rand-int-with-negs 20)
-         sol2 (rand-int-with-negs 20)
+   (let [sol1 (rand-int-with-negs 14)
+         sol2 (rand-int-with-negs 14)
          scale-factor (if isolate-x? 1 (rand-nonzero-int-with-negs 9))
          ;; (x - sol1)(x - sol2) = x^2 - sol1*x - sol2*x + sol1*sol2 = x^2 - (sol1 + sol2)x + sol1*sol2
          a scale-factor
@@ -62,13 +62,37 @@
       :question (render-quadratic-equation-in-standard-form a b c)
       :answer [sol1, sol2]})))
 
+(defn render-simple-linear-inequality [a b c op]
+  (str "$"
+       (coeff-var a "x")
+       (when (and (not (zero? a))
+                (not (zero? b)))
+         " + ")
+       (when-not (zero? b) b)
+       " " op " " c "$"))
+
+(defn linear-inequality
+  ([] (linear-inequality {}))
+  (
+   [opts]
+   (let [a (rand-int-with-negs 20)
+         b (rand-int-with-negs 20)
+         x (rand-int-with-negs 20)
+         c (+ (* a x) b)
+         op (rand-nth ['< '<= '> '>=])]
+     {:type :linear-inequality
+      :question (render-simple-linear-inequality a b c op)
+      })))
+
 (def type->fn
   {:simple-linear-equation simple-linear-equation
-   :quadratic-equation quadratic-equation})
+   :quadratic-equation quadratic-equation
+   :linear-inequality linear-inequality})
 
 (def type->name
   {:simple-linear-equation "simple linear equation"
-   :quadratic-equation "quadratic equation"})
+   :quadratic-equation "quadratic equation"
+   :linear-inequality "linear inequality"})
 
 (def exercise-types (keys type->fn))
 
@@ -76,13 +100,15 @@
   (case (:type exercise)
     :simple-linear-equation 0.75
     :quadratic-equation 1.50
+    :linear-inequality 0.75
     1))
 
 (defn exercise->num-on-page [exercise]
   (let [t (if (map? exercise) (:type exercise) exercise)]
     (case t
       :simple-linear-equation 18
-      :quadratic-equation 12)))
+      :quadratic-equation 12
+      :linear-inequality 18)))
 
 (defn exercise->approx-percent-of-page [exercise]
   (/ 1 (exercise->num-on-page exercise)))
