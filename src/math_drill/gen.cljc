@@ -84,23 +84,37 @@
       :question (render-simple-linear-inequality a b c op)
       })))
 
+(defn render-complete-the-square-blanks [a]
+  (str "$x^2 + " (* 2 a) "x + \\uline{\\hspace{2em}} = (x + \\uline{\\hspace{2em}})^2$")
+  )
+
+(defn complete-the-square-blanks
+  ([] (complete-the-square-blanks {}))
+  ([opts]
+   (let [a (rand-int-with-negs 20)]
+     {:type :complete-the-square-blanks
+      :question (render-complete-the-square-blanks a)})))
+
 (def type->fn
   {:simple-linear-equation simple-linear-equation
    :quadratic-equation quadratic-equation
-   :linear-inequality linear-inequality})
+   :linear-inequality linear-inequality
+   :complete-the-square-blanks complete-the-square-blanks})
 
 (def type->name
   {:simple-linear-equation "simple linear equation"
    :quadratic-equation "quadratic equation"
-   :linear-inequality "linear inequality"})
+   :linear-inequality "linear inequality"
+   :complete-the-square-blanks "complete-the-square fill-in-the-blanks"})
 
 (def exercise-types (keys type->fn))
 
 (defn exercise->vspace [exercise]
   (case (:type exercise)
     :simple-linear-equation 0.75
-    :quadratic-equation 1.50
+    :quadratic-equation 1.00
     :linear-inequality 0.75
+    :complete-the-square-blanks 0.5
     1))
 
 (defn exercise->num-on-page [exercise]
@@ -108,7 +122,8 @@
     (case t
       :simple-linear-equation 18
       :quadratic-equation 12
-      :linear-inequality 18)))
+      :linear-inequality 18
+      :complete-the-square-blanks 12)))
 
 (defn exercise->approx-percent-of-page [exercise]
   (/ 1 (exercise->num-on-page exercise)))
@@ -123,6 +138,7 @@
   (rand-nth (keys (filter (fn [[k v]] v) exr-types))))
 
 (defn random-exercise-from-list [exr-types opts]
+  (println "random-exercise-from-list" exr-types opts)
   ((type->fn (random-exercise-type-from-list exr-types)) opts))
 
 (defn exercises-lazy-seq [exr-types]

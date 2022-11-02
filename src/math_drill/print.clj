@@ -12,6 +12,8 @@
 \\usepackage[letterpaper]{geometry}
 \\usepackage{multicol}
 \\usepackage{layout}
+\\usepackage{soul}
+\\usepackage{ulem}
 
 \\voffset=-0.5in
 \\addtolength{\\textheight}{-2\\voffset}
@@ -27,7 +29,7 @@
 
 (defn exercises-section [exercises {:keys [show-answers?]}]
   (str
-   "\\begin{multicols}{3}
+   "\\begin{multicols}{2}
   \\begin{enumerate}
 "
    (apply str (map (fn [{:keys [question answer] :as exercise}]
